@@ -10,11 +10,13 @@ This Modular-NeuralNet-FromScratch is a highly customizable Multilayer Perceptro
 
 # Performance Notes
 - On small/artificial datasets, the model performs well and converges quickly.
+  
 - On real-world datasets (e.g., Kaggle housing prices), results are more sensitive to:
-        Learning rate (alpha)
-        Regularization strength (lambda)
-        Model size (number of layers and neurons)
-        Proper feature scaling (normalization or standardization)
+
+          - Learning rate (alpha)
+          - Regularization strength (lambda)
+          - Model size (number of layers and neurons)
+          - Proper feature scaling (normalization or standardization)
 
 - Without L2, the model can overfit quickly; L2 helps keep weights small and improves generalization.
 
