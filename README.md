@@ -26,7 +26,9 @@ X = np.random.randn(20, 1000)  # 20 features, 1000 samples
 y = np.random.randn(1, 1000)   # regression target
 
 # Define layers
+
 layers = [
+
     Layer(in_features=20, out_features=64, activation=ReluAct()),
     
     Layer(in_features=64, out_features=16, activation=ReluAct()),
