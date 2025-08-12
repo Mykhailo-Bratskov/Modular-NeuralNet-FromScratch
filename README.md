@@ -20,12 +20,15 @@ This Modular-NeuralNet-FromScratch is a highly customizable Multilayer Perceptro
 
 # Example data
 X = np.random.randn(20, 1000)  # 20 features, 1000 samples
+
 y = np.random.randn(1, 1000)   # regression target
 
 # Define layers
 layers = [
     Layer(in_features=20, out_features=64, activation=ReluAct()),
+    
     Layer(in_features=64, out_features=16, activation=ReluAct()),
+    
     Layer(in_features=16, out_features=1, activation=LinearAct()),
 ]
 
@@ -34,6 +37,7 @@ loss = MeanRegressionError(m=X.shape[1], y=y, lamda=0.01, layers=layers)
 
 # Build and train network
 nn = NeuralNetwork(alpha=0.01, data=X, loss=loss, layers=layers)
+
 nn.fit(max_epochs=500)
 
 # Make predictions
