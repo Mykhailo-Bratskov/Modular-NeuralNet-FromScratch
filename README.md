@@ -19,13 +19,14 @@ This Modular-NeuralNet-FromScratch is a highly customizable Multilayer Perceptro
           - Proper feature scaling (normalization or standardization)
 
 - Without L2, the model can overfit quickly; L2 helps keep weights small and improves generalization.
+# Usage Example 
+## Example data
 
-# Example data
 X = np.random.randn(20, 1000)  # 20 features, 1000 samples
 
 y = np.random.randn(1, 1000)   # regression target
 
-# Define layers
+## Define layers
 
 layers = [
 
@@ -36,22 +37,19 @@ layers = [
     Layer(in_features=8, out_features=1, activation=LinearAct()),
 ]
 
-# Initialize loss with L2 regularization
+## Initialize loss with L2 regularization
 
 loss = MeanRegressionError(m=X.shape[1], y=y, lamda=0.01, layers=layers)
 
-# Build and train network
-
+## Build and train network
 nn = NeuralNetwork(alpha=0.01, data=X, loss=loss, layers=layers)
 
-nn.fit(max_epochs=500)
+nn.fit()
 
-# Make predictions
+## Make predictions
 predictions = nn.predict(X)
 
-# Evaluation
-The model’s performance can be evaluated using Mean Squared Error (MSE) 
-
+## Evaluation 
 nn.meansquarederror(prediction, y_test) 
 
 ## See neuralnetwork_check.ipynb for example training and testing runs.
@@ -61,6 +59,6 @@ The real-world testing was performed on the Kaggle dataset:
 "Housing Price Prediction" by Harish Kumardatalab
 Link: https://www.kaggle.com/datasets/harishkumardatalab/housing-price-prediction/data
 
-License
+# License
 This project is licensed under the MIT License.
 
