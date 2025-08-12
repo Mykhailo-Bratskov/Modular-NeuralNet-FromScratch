@@ -1,0 +1,7 @@
+# To create a model
+numpy
+
+# For the model's performance check 
+pandas
+jupyter
+scikit-learn
