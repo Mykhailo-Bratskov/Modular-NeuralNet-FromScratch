@@ -29,17 +29,19 @@ y = np.random.randn(1, 1000)   # regression target
 
 layers = [
 
-    Layer(in_features=20, out_features=64, activation=ReluAct()),
+    Layer(in_features=20, out_features=12, activation=ReluAct()),
     
-    Layer(in_features=64, out_features=16, activation=ReluAct()),
+    Layer(in_features=12, out_features=8, activation=ReluAct()),
     
-    Layer(in_features=16, out_features=1, activation=LinearAct()),
+    Layer(in_features=8, out_features=1, activation=LinearAct()),
 ]
 
 # Initialize loss with L2 regularization
+
 loss = MeanRegressionError(m=X.shape[1], y=y, lamda=0.01, layers=layers)
 
 # Build and train network
+
 nn = NeuralNetwork(alpha=0.01, data=X, loss=loss, layers=layers)
 
 nn.fit(max_epochs=500)
