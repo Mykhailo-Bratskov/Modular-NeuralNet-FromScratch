@@ -19,12 +19,12 @@ Define any architecture, choose activations and loss functions, and apply L2 reg
 - Verify training via train/test MSE.
 - Tweak hyperparameters: alpha (learning rate), lambda (regularization), and layer dimensions.
 - Ensure your continuous data inputs and target y are properly normalized (mean 0, std 1) to prevent exploding costs.
-- Full performance walkthroughs are in neuralnetwork_check.ipynb.
+- Full performance walkthroughs are in demo.ipynb.
 - Complete code for the model is in nn_constructor.py
   
 ---
 
-## Dataset for neuralnetwork_check.ipynb
+## Dataset for demo.ipynb
 https://www.kaggle.com/datasets/harishkumardatalab/housing-price-prediction/data
 
 ---
