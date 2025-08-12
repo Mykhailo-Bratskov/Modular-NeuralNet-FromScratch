@@ -1,4 +1,5 @@
 # To create a model
+python 3.12
 numpy
 
 # For the model's performance check 
