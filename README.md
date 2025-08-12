@@ -48,9 +48,13 @@ nn.fit(max_epochs=500)
 
 # Make predictions
 predictions = nn.predict(X)
-Evaluation
-The model’s performance can be evaluated using Mean Squared Error (MSE) on both training and test data.
-See neuralnetwork_check.ipynb for example training and testing runs.
+
+# Evaluation
+The model’s performance can be evaluated using Mean Squared Error (MSE) 
+
+nn.meansquarederror(prediction, y_test) 
+
+## See neuralnetwork_check.ipynb for example training and testing runs.
 
 # Dataset
 The real-world testing was performed on the Kaggle dataset:
@@ -59,4 +63,4 @@ Link: https://www.kaggle.com/datasets/harishkumardatalab/housing-price-predictio
 
 License
 This project is licensed under the MIT License.
-T
+
