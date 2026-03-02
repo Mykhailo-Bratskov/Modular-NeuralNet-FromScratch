@@ -21,6 +21,12 @@ Define any architecture, choose activations and loss functions, and apply L2 reg
 - Ensure your continuous data inputs and target y are properly normalized (mean 0, std 1) to prevent exploding costs.
 - Full performance walkthroughs are in demo.ipynb.
 - Complete code for the model is in nn_constructor.py
+
+---
+
+## Model Performance 
+- Model's performance was compared to industry standard machine learning sklearn library
+- Comparison of Linear Output Neural Netwrok to Linear Regression sklearn model can be found in sklearn_vs_modularnn.ipynb
   
 ---
 
