@@ -13,16 +13,16 @@ class Layer():
 
 
     def initial_weight(self): 
-        # m is the number of columns in the data (the number of columns will help to get the right shape of the weight matrix 
+        # He initialization (good default for ReLU hidden layers)
         size_input = self.in_features
         size_of_layer = self.out_features
-        weights_vector = np.random.uniform(low = 0 , high = 1, size = (size_of_layer, size_input))
+        weights_vector = np.random.randn(size_of_layer, size_input) * np.sqrt(2 / size_input)
         return weights_vector
 
     def initial_b(self): 
-        #initializing the b_intercept for each Layer 
+        # Start biases at zero
         size_of_layer = self.out_features
-        b_vector = np.random.uniform(low = 0 , high = 1, size = (size_of_layer, 1))
+        b_vector = np.zeros((size_of_layer, 1))
         return b_vector
     
     def z(self, X): 
@@ -43,10 +43,10 @@ class Layer():
             dZ = dA * self.activation.derivative(self.Z)   # (out, m)
 
         m = self.X.shape[1]
-        dW = np.matmul (dZ ,self.X.T) / m                       # (out, in)
+        dW = np.matmul(dZ, self.X.T)                     # (out, in)
         if lamda:
             dW += (lamda / m) * self.weights           # L2 on weights only
-        db = np.sum(dZ, axis=1, keepdims=True) / m     # (out, 1)
+        db = np.sum(dZ, axis=1, keepdims=True)          # (out, 1)
         dA_prev = np.matmul(self.weights.T,  dZ)             # (in, m)
 
         return dA_prev, dW, db
@@ -124,7 +124,7 @@ class NeuralNetwork():
         self.alpha = alpha
         self.data = data
         self.loss = loss 
-        self.layers = list(layers)
+        self.layers = list(layers) if layers is not None else []
     
     # the layers passing data to each other 
     def layer_connection(self): 
@@ -180,14 +180,14 @@ class NeuralNetwork():
                 best_value = cost
                 self.gradient_descent()
                 count += 1
-                print(f"epoch {count} - cost {cost}")
+                self.print_loss_breakdown(count)
             #if we hit plateu, iterate 20 more times to see if the cost can be improved. If not -> stop
             else: 
                 lst = []
                 for i in range(20):
                     self.gradient_descent()
                     cost = np.round(self.cost(), 4)
-                    print(f"epoch {count + i + 1} - cost {cost}")
+                    self.print_loss_breakdown(count + i + 1)
                     lst.append(cost)
                 if min(lst) < best_value:
                     statement = True
@@ -204,7 +204,7 @@ class NeuralNetwork():
         return params
     
     # the compiled model making prediction on a new data to see how well does model generalize
-    def predict(self, x): 
+    def predict_raw(self, x):
         lst = []
         first_hidden = self.layers[0].forwardpass(x)
         lst.append(first_hidden)
@@ -213,6 +213,24 @@ class NeuralNetwork():
             lst.append(datapassing)
         output_layer = lst[-1]
         return output_layer
+
+    # predictions are adjusted to the output activations as linear use different from linear
+    def predict_classes(self, X):
+        yhat = self.predict_raw(X)
+
+        # Binary classification
+        if yhat.shape[0] == 1 and isinstance(self.loss, BinaryCrossEntropy):
+            return (yhat >= 0.5).astype(int)
+
+        # Multiclass classification
+        if isinstance(self.loss, CategoricalCrossEntropy):
+            return np.argmax(yhat, axis=0)
+
+        raise ValueError("predict_classes() is only for classification tasks.")
+
+    def predict(self, X):
+        # For regression or generic use
+        return self.predict_raw(X)
     
     # these two last methods are simply used to check how accurate the predictions are on new data. 
     # They are greatly simplified and do not use the most optimized mathematics to obtain best possible results. 
@@ -228,3 +246,47 @@ class NeuralNetwork():
         count = np.sum(prediction == y)
         accuracy = (count / len(y)) * 100
         return f"The accuracy is {accuracy:.2f}%"
+    # computing mean squared error (more modular to separate in several functions instead of one)
+    def mse_loss(self, yhat, y):
+        yhat = np.asarray(yhat)
+        y = np.asarray(y)
+        return np.mean((yhat - y) ** 2)
+    # this is an addition to computing costs, as the code implements regularization
+    # making it separate from main loss computing functions for error tractability reasons
+    def l2_reg_loss(self, m=None):
+        # m = number of samples in current batch/dataset
+        if m is None:
+            m = self.data.shape[1]
+
+        lam = getattr(self.loss, "lamda", 0.0)
+        if lam is None or lam == 0:
+            return 0.0
+
+        weight_sum = 0.0
+        for layer in self.layers:
+            # adapt attribute name if you use layer.w instead of layer.weights
+            W = layer.weights
+            weight_sum += np.sum(W ** 2)
+
+        return (lam / (2 * m)) * weight_sum
+
+    # adding all the costs for the neural network
+    def total_loss(self, yhat, y, m=None):
+        data_loss = self.mse_loss(yhat, y)
+        reg_loss = self.l2_reg_loss(m=m)
+        return data_loss + reg_loss, data_loss, reg_loss
+    
+    # more detailed breakdown of training for tracing errors in training 
+    def print_loss_breakdown(self, epoch_num):
+        yhat = self.forward_propagation(self.data) if hasattr(self, "forward_propagation") else self.output_layer()
+        y_true = self.loss.y
+        m = self.data.shape[1]
+
+        total, data_loss, reg_loss = self.total_loss(yhat, y_true, m=m)
+
+        print(
+            f"epoch {epoch_num} - "
+            f"data_loss(MSE): {data_loss:.6f} | "
+            f"reg_loss: {reg_loss:.6f} | "
+            f"total: {total:.6f}"
+        )
